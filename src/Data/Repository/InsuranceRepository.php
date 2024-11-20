@@ -4,19 +4,9 @@ namespace Data\Repository;
 
 use Data\Model\Insurance;
 
-class DetailsRepository implements InsuranceRepositoryInterface
+class InsuranceRepository implements InsuranceRepositoryInterface
 {
-    private $db;
-
-    public function __construct()
-    {
-        try {
-            $db = mysqli_connect("localhost", "user", "password", "database");
-            $this->db = $db;
-        } catch (\Exception $e) {
-            // handle error
-        }
-    }
+    public function __construct(private \mysqli $database) {}
 
     public function getAll(): array
     {
@@ -24,7 +14,7 @@ class DetailsRepository implements InsuranceRepositoryInterface
         $sql = "SELECT attribute_name FROM table_name WHERE condition";
         
         $result_array = [];
-        $result_set = $this->db->query($sql);
+        $result_set = $this->database->query($sql);
         while ($row = $result_set->fetch_assoc()) {
             $result_array[] = $row;
         }

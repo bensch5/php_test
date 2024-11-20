@@ -1,31 +1,30 @@
 <?php
 
 use Infrastructure\Container;
-use Data\Repository\DetailsRepository;
-use Data\Repository\OverviewRepository;
-use ExternalApi\DetailsController;
-use ExternalApi\OverviewController;
+use Data\Repository\InsuranceRepository;
+use ExternalApi\InsuranceController;
 
 $container = new Container();
 
-$container->set('overviewRepository', function() {
-    return new OverviewRepository();
+$container->set('database', function() {
+    $hostname = 'localhost';
+    $username = 'user';
+    $password = 'password';
+    $database = 'database';
+
+    return mysqli_connect($hostname, $username, $password, $database);
 });
 
-$container->set('overviewController', function($c) {
-    $repository = $c->get('overviewRepository');
+$container->set('insuranceRepository', function($c) {
+    $database = $c->get('database');
     
-    return new OverviewController($repository);
+    return new InsuranceRepository($database);
 });
 
-$container->set('detailsRepository', function() {
-    return new DetailsRepository();
-});
-
-$container->set('detailsController', function($c) {
-    $repository = $c->get('detailsRepository');
-
-    return new DetailsController($repository);
+$container->set('insuranceController', function($c) {
+    $repository = $c->get('insuranceRepository');
+    
+    return new InsuranceController($repository);
 });
 
 return $container;

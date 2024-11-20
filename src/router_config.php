@@ -4,7 +4,7 @@ use Infrastructure\Routing\Router;
 
 $router = Router::getRouter();
 
-$router->get('/overview', 'overviewController');
-$router->get('/details', 'detailsController');
+$router->get('/overview', 'insuranceController->getOverview');
+$router->get('/details', 'insuranceController->getDetails');
 
 return $router;

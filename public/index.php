@@ -14,12 +14,17 @@ $request = Request::createFromGlobals();
 try {
     $method = $request->getMethod();
     $path = $request->getPathInfo();
-    $controller = $container->get($router->route($method, $path));
+
+    $route = $router->route($method, $path);
+    $controller = $container->get($route['controller']);
+    $function = $route['function'];
     
-    $response = $controller->handle($request);
-} catch(ResourceNotFoundException $e) {
-    $response = new Response("Requested resource doesn't exist.", 404);
-} catch(\Exception $e) {
+    $response = call_user_func([$controller, $function], $request);
+} catch (ResourceNotFoundException $e) {
+    $response = new Response('Requested resource doesn\'t exist.', 404);
+} catch (\mysqli_sql_exception $e) {
+    $response = new Response('Database connection failed.', 503);
+} catch (\Exception | \Error $e) {
     $response = new Response(sprintf('Something went wrong. %s', $e->getMessage()), 500);
 }
 
